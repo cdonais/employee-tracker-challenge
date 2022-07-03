@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS departments;
+
 CREATE TABLE departments(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
@@ -13,7 +17,6 @@ CREATE TABLE employees(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL, 
-    manager_id INTEGER,
-    CONSTRAINT fk_roleId FOREIGN KEY (id)
-    REFERENCES roles(id)
+    role_id INTEGER,
+    manager_id INTEGER
 );
