@@ -1,5 +1,16 @@
 const inquirer=require('inquirer');
-
+const Employee=require('./lib/employee');
+let mysql=require('mysql');
+let connection=mysql.createConnection({
+    host:'localhost',
+    user:'root',
+    password:'password',
+    database:'employee_tracker'
+});
+connection.connect(function(err){
+    if(err) throw err;
+    console.log("connected!");
+})
 const userPrompt=()=>{
     return inquirer.prompt([
         {
@@ -19,7 +30,30 @@ const userPrompt=()=>{
 
     ])
     .then((data)=>{
-        if(data.what_do==='Add department'){
+        if (data.what_do==='View all departments'){
+                connection.query("SELECT * FROM departments",function(err,result,fields){
+                    if (err) throw err;
+                    console.log(result);
+                })
+            
+        }
+        else if (data.what_do==='View all roles'){
+            connection.query("SELECT * FROM roles",function(err,result,fields){
+                if (err) throw err;
+                console.log(result);
+            })
+        
+    }
+    else if (data.what_do==='View all employees'){
+        connection.query("SELECT * FROM employees",function(err,result,fields){
+            if (err) throw err;
+            console.log(result);
+        })
+    
+}
+
+
+        else if(data.what_do==='Add department'){
             return inquirer.prompt({
                 type: 'input',
                 name: 'newDepartment',
