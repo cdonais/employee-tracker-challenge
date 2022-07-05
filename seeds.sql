@@ -6,12 +6,12 @@ VALUES
     ('Management');
 
 
-INSERT INTO roles(title,salary)
+INSERT INTO roles(title,salary,department)
 VALUES 
-    ('Salesperson','75000.00'),
-    ('Engineer', '150000.00'),
-    ('Accountant','65000.00'),
-    ('Manager', '175000.00');
+    ('Salesperson','75000.00','Sales'),
+    ('Engineer', '150000.00','Engineering'),
+    ('Accountant','65000.00','Accounting'),
+    ('Manager', '175000.00','Management');
 
 
 INSERT INTO employees(first_name,last_name,role_id,manager_id)

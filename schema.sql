@@ -10,8 +10,7 @@ CREATE TABLE roles(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(10,2),
-    CONSTRAINT fk_departmentId FOREIGN KEY (id)
-    REFERENCES departments(id)
+    department VARCHAR(30) NOT NULL
 );
 CREATE TABLE employees(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,

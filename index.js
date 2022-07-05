@@ -1,5 +1,7 @@
 const inquirer=require('inquirer');
 const Employee=require('./lib/employee');
+const Department=require('./lib/department');
+const Role=require('./lib/role');
 let mysql=require('mysql');
 let connection=mysql.createConnection({
     host:'localhost',
@@ -56,15 +58,20 @@ const userPrompt=()=>{
         else if(data.what_do==='Add department'){
             return inquirer.prompt({
                 type: 'input',
-                name: 'newDepartment',
+                name: 'name',
                 message: 'What is the department name?'
+            })
+            .then(data=>{
+                connection.query("INSERT INTO departments SET ?",{
+                    name:data.name
+                })
             })
         } else if(data.what_do==='Add role'){
             return inquirer.prompt([
                 {
                 type: 'input',
-                name: 'role',
-                message: 'What is the role?'
+                name: 'title',
+                message: 'What is the title of this role?'
             },
             {
                 type: 'input',
@@ -76,7 +83,15 @@ const userPrompt=()=>{
                 name: 'department',
                 message: 'What department is this role in?'
             }
-        ])
+        ]).then(data=>{
+            connection.query("INSERT INTO roles SET ?",{
+
+                title:data.title,
+                salary:data.salary,
+                department:data.department
+        })
+
+        })
         } else if(data.what_do==='Add employee'){
             return inquirer.prompt([
                 {
@@ -90,16 +105,30 @@ const userPrompt=()=>{
                     message: "What is the employee's last name?"
                 },
                 {
-                    type:'input',
+                    type:'list',
                     name:'employeeRole',
-                    message:"What is the employee's role?"
+                    message:"What is the employee's role?",
+                    choices:[1,2,3,4]
                 },
                 {
-                    type:'input',
+                    type:'list',
                     name:'manager',
-                    message:"Who is the employee's manager?"
+                    message:"Who is the employee's manager?",
+                    choices: [
+                        1,2
+                    ]
                 }
             ])
+            .then(data=>{
+                
+                connection.query("INSERT INTO employees SET ?",{
+                    first_name:data.firstName,
+                    last_name:data.lastName,
+                    role_id:data.emoloyeeRole,
+                    manager_id:data.manager
+
+                })
+            })
         }
     })
 }
