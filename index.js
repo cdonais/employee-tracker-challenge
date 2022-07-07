@@ -1,17 +1,15 @@
 const inquirer=require('inquirer');
-const Employee=require('./lib/employee');
-const Department=require('./lib/department');
-const Role=require('./lib/role');
-let mysql=require('mysql');
+const cTable=require('console.table');
+require('dotenv').config();
+let mysql=require('mysql2');
 let connection=mysql.createConnection({
     host:'localhost',
-    user:'root',
-    password:,
-    database:'employee_tracker'
+    user: 'root',
+    database: 'employee_tracker'
+
 });
 connection.connect(function(err){
     if(err) throw err;
-    console.log("connected!");
 })
 const userPrompt=()=>{
     return inquirer.prompt([
@@ -29,29 +27,32 @@ const userPrompt=()=>{
                 'Update employee role'
             ]
         }
-
+        
     ])
     .then((data)=>{
         if (data.what_do==='View all departments'){
                 connection.query("SELECT * FROM departments",function(err,result,fields){
                     if (err) throw err;
-                    console.log(result);
+                    console.table(result);
                 })
-            
+                userPrompt();
+
         }
         else if (data.what_do==='View all roles'){
             connection.query("SELECT * FROM roles",function(err,result,fields){
                 if (err) throw err;
-                console.log(result);
+                console.table(result);
             })
-        
+            userPrompt();
+
     }
     else if (data.what_do==='View all employees'){
         connection.query("SELECT * FROM employees",function(err,result,fields){
             if (err) throw err;
-            console.log(result);
+            console.table(result);
         })
-    
+        userPrompt();
+
 }
 
 
@@ -63,9 +64,17 @@ const userPrompt=()=>{
             })
             .then(data=>{
                 connection.query("INSERT INTO departments SET ?",{
+                   
                     name:data.name
+
                 })
-            })
+                userPrompt();
+
+            })    
+              
+        
+        
+            
         } else if(data.what_do==='Add role'){
             return inquirer.prompt([
                 {
@@ -90,9 +99,20 @@ const userPrompt=()=>{
                 salary:data.salary,
                 department:data.department
         })
-
+            console.table(result)
+            userPrompt();
         })
         } else if(data.what_do==='Add employee'){
+            connection.query("SELECT * FROM ROLES",function(err,result,fields){
+                if (err) throw err;
+                console.log(result);
+                 const roleList=result.map(role =>{
+                     return{
+                         name: role.title,
+                         value: role.id
+                        }
+                    })   
+                    console.log(roleList);    
             return inquirer.prompt([
                 {
                     type:'input',
@@ -108,14 +128,15 @@ const userPrompt=()=>{
                     type:'list',
                     name:'employeeRole',
                     message:"What is the employee's role?",
-                    choices:[1,2,3,4]
+                    choices: roleList
                 },
                 {
                     type:'list',
                     name:'manager',
                     message:"Who is the employee's manager?",
                     choices: [
-                        1,2
+                        'Vince McMahon',
+                        'Paul Heyman'
                     ]
                 }
             ])
@@ -128,7 +149,49 @@ const userPrompt=()=>{
                     manager_id:data.manager
 
                 })
+                console.table(result);
             })
+            
+        })
+        userPrompt();
+    }
+       else {
+            connection.query("SELECT * FROM employees",function(err,result,fields){
+                if (err) throw err;
+                console.log(result);
+                 const employeeChoices=result.map(employee =>{
+                     return{
+                         name: `${employee.first_name} ${employee.last_name}`,
+                         value: employee.id
+                        }
+                 })
+                 console.log(employeeChoices);
+            
+             return inquirer.prompt({
+                type: 'list',
+                name: 'employee',
+                message: 'Which employee would you like to edit?',
+                choices: employeeChoices
+            }).then(data=>{
+                    let selectedEmployee=data.employee;
+                return inquirer.prompt({
+                    type: 'input',
+                    name: 'newRole',
+                    message: 'What is the new role for this employee?',
+                    
+                })
+                .then(data=>{
+                    connection.query(`UPDATE employees SET role_id='${data.newRole}' WHERE id=${selectedEmployee}`,{
+                       
+                    })
+                    console.table(result);
+                    userPrompt();
+                })     
+        
+                
+            })   
+            }) 
+
         }
     })
 }
