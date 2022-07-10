@@ -16,4 +16,4 @@ After installing the necessary NPMs, type "node index" into the command line, th
 
 ## Questions?
 
-Please contact me via [email](mailto:carly.donais@gmail.com) or visit my [GitHub]([http://](https://github.com/cdonais)
+Please contact me via [email](mailto:carly.donais@gmail.com) or visit my [GitHub](https://github.com/cdonais)
