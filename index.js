@@ -1,10 +1,10 @@
 const inquirer=require('inquirer');
 const cTable=require('console.table');
-require('dotenv').config();
 let mysql=require('mysql2');
 let connection=mysql.createConnection({
     host:'localhost',
     user: 'root',
+    password: 'password',
     database: 'employee_tracker'
 
 });
@@ -24,7 +24,8 @@ const userPrompt=()=>{
                 'Add department',
                 'Add role',
                 'Add employee',
-                'Update employee role'
+                'Update employee role',
+
             ]
         }
         
@@ -33,6 +34,7 @@ const userPrompt=()=>{
         if (data.what_do==='View all departments'){
                 connection.query("SELECT * FROM departments",function(err,result,fields){
                     if (err) throw err;
+                    console.log("==========================")
                     console.table(result);
                 })
                 userPrompt();
@@ -41,6 +43,7 @@ const userPrompt=()=>{
         else if (data.what_do==='View all roles'){
             connection.query("SELECT * FROM roles",function(err,result,fields){
                 if (err) throw err;
+                console.log("=======================")
                 console.table(result);
             })
             userPrompt();
@@ -49,6 +52,7 @@ const userPrompt=()=>{
     else if (data.what_do==='View all employees'){
         connection.query("SELECT * FROM employees",function(err,result,fields){
             if (err) throw err;
+            console.log("=================================")
             console.table(result);
         })
         userPrompt();
@@ -99,20 +103,16 @@ const userPrompt=()=>{
                 salary:data.salary,
                 department:data.department
         })
-            console.table(result)
             userPrompt();
         })
         } else if(data.what_do==='Add employee'){
             connection.query("SELECT * FROM ROLES",function(err,result,fields){
                 if (err) throw err;
-                console.log(result);
                  const roleList=result.map(role =>{
                      return{
                          name: role.title,
-                         value: role.id
                         }
                     })   
-                    console.log(roleList);    
             return inquirer.prompt([
                 {
                     type:'input',
@@ -145,16 +145,17 @@ const userPrompt=()=>{
                 connection.query("INSERT INTO employees SET ?",{
                     first_name:data.firstName,
                     last_name:data.lastName,
-                    role_id:data.emoloyeeRole,
+                    title:data.employeeRole,
                     manager_id:data.manager
 
                 })
-                console.table(result);
+                userPrompt();
+
             })
             
+        
         })
-        userPrompt();
-    }
+}
        else {
             connection.query("SELECT * FROM employees",function(err,result,fields){
                 if (err) throw err;
@@ -165,7 +166,6 @@ const userPrompt=()=>{
                          value: employee.id
                         }
                  })
-                 console.log(employeeChoices);
             
              return inquirer.prompt({
                 type: 'list',
@@ -181,9 +181,10 @@ const userPrompt=()=>{
                     
                 })
                 .then(data=>{
-                    connection.query(`UPDATE employees SET role_id='${data.newRole}' WHERE id=${selectedEmployee}`,{
+                    connection.query(`UPDATE employees SET title='${data.newRole}' WHERE id=${selectedEmployee}`,{
                        
                     })
+                    console.log('==================')
                     console.table(result);
                     userPrompt();
                 })     
