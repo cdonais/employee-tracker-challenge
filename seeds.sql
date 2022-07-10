@@ -14,7 +14,7 @@ VALUES
     ('Manager', '175000.00','Management');
 
 
-INSERT INTO employees(first_name,last_name,role_id,manager_id)
+INSERT INTO employees(first_name,last_name,title,manager)
 VALUES 
     ('Vince','McMahon','Manager',NULL),
     ('Paul','Heyman','Manager',NULL),
