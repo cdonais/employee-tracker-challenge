@@ -13,6 +13,7 @@ After installing the necessary NPMs, type "node index" into the command line, th
 * MySQL
 * Node
 * Inquirer NPM
+* Console.table NPM
 
 ## Questions?
 
